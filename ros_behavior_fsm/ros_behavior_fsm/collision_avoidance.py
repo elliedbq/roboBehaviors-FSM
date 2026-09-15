@@ -3,6 +3,7 @@ import rclpy
 from rclpy.node import Node
 from neato2_interfaces.msg import Bump
 from geometry_msgs.msg import Twist 
+from sensor_msgs.msg import LaserScan
 
 class CollisionAvoidanceNode(Node):
     """This is a message subscription node, which inherits from the rclpy Node class."""
@@ -12,29 +13,41 @@ class CollisionAvoidanceNode(Node):
 
         self.create_timer(0.1, self.send_vel)
 
+        self.target_stop = 0.2 # closest robot should get to the wall
+        self.target_slow = 0.5 # when robot starts slowing down
+        self.distance_to_obstacle = 0
+
         self.vel = Twist()
         self.bump_state = False
         self.sub = self.create_subscription(Bump, 'bump', self.process_bump, 10)
         self.sub = self.create_subscription(Twist, 'des_vel', self.process_des_vel, 10)
 
+        self.sub = self.create_subscription(LaserScan, 'scan', self.process_scan, 10)
+
         self.publisher = self.create_publisher(Twist, 'cmd_vel', 10)
 
-        self.send_vel()
 
     def process_bump(self, msg):
         """Takes msg input and prints the header of that message."""
         self.bump_state =  msg.left_front == 1 or msg.right_front == 1 or msg.left_side == 1 or msg.right_side == 1 
 
     def process_des_vel(self, msg):
-        
         self.vel.linear.x = msg.linear.x
 
-        
+    def process_scan(self, msg):
+        if msg.ranges[0] != 0:
+            self.distance_to_obstacle = msg.ranges[0]
 
     def send_vel(self):
         if self.bump_state == True:
             self.vel.linear.x = 0.0
-            print('stopped')
+            print('stopped bumped')
+        elif self.distance_to_obstacle < self.target_stop:
+            self.vel.linear.x = 0.0
+            print('stopped close to wall')
+        elif self.distance_to_obstacle < self.target_slow:
+            self.vel.linear.x = self.vel.linear.x/(self.target_slow - self.distance_to_obstacle)
+            print('slowing down')
         self.publisher.publish(self.vel)
         print(self.vel.linear.x)
 
