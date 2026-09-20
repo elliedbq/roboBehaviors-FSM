@@ -19,16 +19,16 @@ class CollisionAvoidanceNode(Node):
 
         self.vel = Twist()
         self.bump_state = False
-        self.sub = self.create_subscription(Bump, 'bump', self.process_bump, 10)
-        self.sub = self.create_subscription(Twist, 'des_vel', self.process_des_vel, 10)
+        self.bump_sub = self.create_subscription(Bump, 'bump', self.process_bump, 10)
+        self.des_vel_sub = self.create_subscription(Twist, 'des_vel', self.process_des_vel, 10)
 
-        self.sub = self.create_subscription(LaserScan, 'scan', self.process_scan, 10)
+        self.scan_sub = self.create_subscription(LaserScan, 'scan', self.process_scan, 10)
 
-        self.publisher = self.create_publisher(Twist, 'cmd_vel', 10)
+        self.cmd_vel_pub = self.create_publisher(Twist, 'cmd_vel', 10)
 
 
     def process_bump(self, msg):
-        """Takes msg input and prints the header of that message."""
+        """sets bump state"""
         self.bump_state =  msg.left_front == 1 or msg.right_front == 1 or msg.left_side == 1 or msg.right_side == 1 
 
     def process_des_vel(self, msg):
@@ -42,14 +42,14 @@ class CollisionAvoidanceNode(Node):
         if self.bump_state == True:
             self.vel.linear.x = 0.0
             print('stopped bumped')
-        elif self.distance_to_obstacle < self.target_stop:
-            self.vel.linear.x = 0.0
-            print('stopped close to wall')
-        elif self.distance_to_obstacle < self.target_slow:
-            self.vel.linear.x = self.vel.linear.x/(self.target_slow - self.distance_to_obstacle)
-            print('slowing down')
-        self.publisher.publish(self.vel)
-        print(self.vel.linear.x)
+        # elif self.distance_to_obstacle < self.target_stop:
+        #     self.vel.linear.x = 0.0
+        #     print('stopped close to wall')
+        # elif self.distance_to_obstacle < self.target_slow:
+        #     self.vel.linear.x = self.vel.linear.x/(self.target_slow - self.distance_to_obstacle)
+        #     print('slowing down')
+        self.cmd_vel_pub.publish(self.vel)
+        print(str(self.vel.linear.x) + 'and' + str(self.vel.angular.z))
 
 
             

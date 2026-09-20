@@ -25,7 +25,8 @@ setup(
     entry_points={
         'console_scripts': [
             'collision_avoidance = ros_behavior_fsm.collision_avoidance:main',
-            'go_straight = ros_behavior_fsm.go_straight:main'
+            'go_straight = ros_behavior_fsm.go_straight:main',
+            'wall_follower = ros_behavior_fsm.wall_follower:main'
         ],
     },
 )
