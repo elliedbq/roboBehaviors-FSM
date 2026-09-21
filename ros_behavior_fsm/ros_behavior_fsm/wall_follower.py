@@ -16,10 +16,8 @@ class WallFollowerNode(Node):
         self.state_active = True
         self.wall_dist = 0.5
         self.wall_status = 'unknown'
-        # options:  'at wall' (parallel to wall) 
-        #           'turning' (next to wall but at edge, need to turn) 
+        # options:  'parallel' (parallel to wall) 
         #           'unknown' (need to find a wall and go towards it)
-        #           'toward wall' (going straight toward wall)
         #           'at wall' (at wall, need to align to be straight)
 
         self.des_vel_pub = self.create_publisher(Twist, 'des_vel', 10)
@@ -47,8 +45,8 @@ class WallFollowerNode(Node):
             print('becoming parallel')
             self.turn_to_wall(msg)
         else:
-            print('done')
-            self.send_velocity(0.0,0.0)
+            print('following wall')
+            self.follow_wall(msg)
 
         # # if parallel to wall
         # if abs(self.find_distance(msg.ranges[80], 80) - self.find_distance(msg.ranges[100],100)) \
@@ -82,26 +80,47 @@ class WallFollowerNode(Node):
             if msg.ranges[i] < self.wall_dist \
                 and msg.ranges[i+5] < self.wall_dist \
                 and msg.ranges[i+10] < self.wall_dist:
-                self.wall_status = 'at wall'
+                self.wall_status = 'at_wall'
                 print('wall found')
                 self.send_velocity(0.0,0.0) # stop once at wall
-                break
+                return
         if abs(msg.ranges[10] - msg.ranges[350]) < 0.1 \
             and abs(msg.ranges[20] - msg.ranges[340]) < 0.1: 
             # checks for wall in front of robot. (< 0.3 is in case of error in laser scans)
             self.send_velocity(0.1, 0.0) # if wall then go toward wall. if no wall, rotate.
         else:
-            self.send_velocity(0.0, 10)
+            self.send_velocity(0.0, -10)
 
     def turn_to_wall(self, msg):
-        if 
-
-
-
-    def follow_wall(self):
-        """tells robot to follows wall"""
-        if self.wall_status == 'at wall':
+        # parallel to wall if side measurements line up
+        # and there is NOT a wall directly in front.
+        diff = msg.ranges[90] - self.find_distance(msg.ranges[100] ,100)
+        print(msg.ranges[1])
+        if msg.ranges[1] > (self.wall_dist) and abs(diff) < 0.005:
+            print('parallel to wall')
             self.send_velocity(0.0,0.0)
+            self.wall_status = 'parallel'
+        else:
+            self.send_velocity(0.0, 10)
+
+
+
+
+    def follow_wall(self, msg):
+        """tells robot to follows wall"""
+        print('start function')
+        if msg.ranges[1] < self.wall_dist*1.2:
+            print('turn')
+            self.send_velocity(0.0, -10)
+        elif msg.ranges[90] < self.find_distance(msg.ranges[80], 80):
+            print('up')
+            self.send_velocity(0.1, 10)
+        elif msg.ranges[90] > self.find_distance(msg.ranges[80], 80):
+            print('down')
+            self.send_velocity(0.1, -10)
+        else:
+            print('straight')
+            self.send_velocity(0.1, 0.0)
 
     def send_velocity(self, linear, angle):
         """publishes desired velcoity"""
