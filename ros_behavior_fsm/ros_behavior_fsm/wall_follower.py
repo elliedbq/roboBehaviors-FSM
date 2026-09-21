@@ -14,7 +14,8 @@ class WallFollowerNode(Node):
         super().__init__('wall_follower_node')
 
         self.state_active = True
-        self.wall_status = 'at wall'
+        self.wall_dist = 0.5
+        self.wall_status = 'unknown'
         # options:  'at wall' (parallel to wall) 
         #           'turning' (next to wall but at edge, need to turn) 
         #           'unknown' (need to find a wall and go towards it)
@@ -25,14 +26,11 @@ class WallFollowerNode(Node):
 
         self.state_sub = self.create_subscription(String, 'state', self.process_state, 10)
         self.scan_sub = self.create_subscription(LaserScan, 'scan', self.process_scan, 10)
-        print('scan')
 
-        if self.state_active:
-            self.create_timer(0.1, self.follow_wall)
 
     def process_state(self,msg):
         """takes state msg and determines if wall following state is active"""
-        if msg.string == 'wall_following':
+        if msg.data == 'wall_following':
             self.state_active = True
         else:
             self.state_active = False
@@ -40,50 +38,76 @@ class WallFollowerNode(Node):
 
     def process_scan(self, msg):
         """takes msg input and sets wall status"""
-        # if parallel to wall
-        if abs(self.find_distance(msg.ranges[80], 80) - self.find_distance(msg.ranges[100],100)) \
-        == 0.1 \
-        and self.find_distance(msg.ranges[90],90) == 0.3:
-            self.send_velocity(0)
-            print('parallel to wall')
-            self.wall_status = 'at wall'
-        elif self.find_distance(msg.ranges[90],90) > self.find_distance(msg.ranges[100],100) or \
-            self.find_distance(msg.ranges[90],90) < 0.3:
-            self.send_velocity(0.1)
-            self.wall_status = 'at wall'
+        print('scanning')
 
-        elif self.find_distance(msg.ranges[90], 90) < self.find_distance(msg.ranges[100],100) or \
-            self.find_distance(msg.ranges[90],90) > 0.3:
-            self.send_velocity(-0.1)
-            self.wall_status = 'at wall'
+        if self.wall_status == 'unknown':
+            print('finding wall')
+            self.find_wall(msg)
+        elif self.wall_status == 'at_wall':
+            print('becoming parallel')
+            self.turn_to_wall(msg)
+        else:
+            print('done')
+            self.send_velocity(0.0,0.0)
 
-        else: 
-            self.send_velocity(0)
-            print('idk')
+        # # if parallel to wall
+        # if abs(self.find_distance(msg.ranges[80], 80) - self.find_distance(msg.ranges[100],100)) \
+        # < 0.1 \
+        # and self.find_distance(msg.ranges[90],90) < 0.3:
+        #     self.send_velocity(0.1, 0)
+        #     print('parallel to wall')
+        # elif self.find_distance(msg.ranges[90],90) > self.find_distance(msg.ranges[80],80) or \
+        #     self.find_distance(msg.ranges[90],90) < 0.3:
+        #     self.send_velocity(0.1, 10)
+        #     print('turning toward wall')
+
+        # elif self.find_distance(msg.ranges[90], 90) < self.find_distance(msg.ranges[80],80) or \
+        #     self.find_distance(msg.ranges[90],90) > 0.3:
+        #     self.send_velocity(0.1, -10)
+        #     print('turning away from wall')
+        # else: 
+        #     self.send_velocity(0,0)
+        #     print('idk')
+        # print('scan complete')
         
             
 
     def find_distance(self, length, angle):
         """find normalized distance"""
         angle = math.radians(angle)
-        return length*math.cos(angle)
+        return abs(length*math.sin(angle))
+
+    def find_wall(self, msg):
+        for i in range(0, len(msg.ranges) - 10, 5):
+            if msg.ranges[i] < self.wall_dist \
+                and msg.ranges[i+5] < self.wall_dist \
+                and msg.ranges[i+10] < self.wall_dist:
+                self.wall_status = 'at wall'
+                print('wall found')
+                self.send_velocity(0.0,0.0) # stop once at wall
+                break
+        if abs(msg.ranges[10] - msg.ranges[350]) < 0.1 \
+            and abs(msg.ranges[20] - msg.ranges[340]) < 0.1: 
+            # checks for wall in front of robot. (< 0.3 is in case of error in laser scans)
+            self.send_velocity(0.1, 0.0) # if wall then go toward wall. if no wall, rotate.
+        else:
+            self.send_velocity(0.0, 10)
+
+    def turn_to_wall(self, msg):
+        if 
+
 
 
     def follow_wall(self):
         """tells robot to follows wall"""
         if self.wall_status == 'at wall':
-            self.send_velocity(0)
+            self.send_velocity(0.0,0.0)
 
-    def send_velocity(self, angle):
+    def send_velocity(self, linear, angle):
         """publishes desired velcoity"""
         vel = Twist()
-        if angle == 0:
-            vel.linear.x = 0.1
-            vel.angular.z = 0.0
-        else:
-            vel.linear.x = 0.1
-            vel.angular.x = math.radians(angle)
-
+        vel.linear.x = linear
+        vel.angular.z = math.radians(angle)
         self.des_vel_pub.publish(vel)
 
 

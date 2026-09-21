@@ -28,12 +28,11 @@ class CollisionAvoidanceNode(Node):
 
 
     def process_bump(self, msg):
-        """sets bump state"""
+        """Takes msg input and prints the header of that message."""
         self.bump_state =  msg.left_front == 1 or msg.right_front == 1 or msg.left_side == 1 or msg.right_side == 1 
 
     def process_des_vel(self, msg):
         self.vel.linear.x = msg.linear.x
-        self.vel.angular.z = msg.angular.z
 
     def process_scan(self, msg):
         if msg.ranges[0] != 0:
@@ -42,16 +41,15 @@ class CollisionAvoidanceNode(Node):
     def send_vel(self):
         if self.bump_state == True:
             self.vel.linear.x = 0.0
-            self.vel.angular.z = 0.0
             print('stopped bumped')
-        # elif self.distance_to_obstacle < self.target_stop:
-        #     self.vel.linear.x = 0.0
-        #     print('stopped close to wall')
-        # elif self.distance_to_obstacle < self.target_slow:
-        #     self.vel.linear.x = self.vel.linear.x/(self.target_slow - self.distance_to_obstacle)
-        #     print('slowing down')
-        self.cmd_vel_pub.publish(self.vel)
-        print(str(self.vel.linear.x) + 'and' + str(self.vel.angular.z))
+        elif self.distance_to_obstacle < self.target_stop:
+            self.vel.linear.x = 0.0
+            print('stopped close to wall')
+        elif self.distance_to_obstacle < self.target_slow:
+            self.vel.linear.x = self.vel.linear.x/(self.target_slow - self.distance_to_obstacle)
+            print('slowing down')
+        self.publisher.publish(self.vel)
+        print(self.vel.linear.x)
 
 
             
