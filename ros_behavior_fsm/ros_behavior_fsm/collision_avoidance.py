@@ -14,7 +14,7 @@ class CollisionAvoidanceNode(Node):
         self.create_timer(0.1, self.send_vel)
 
         self.target_stop = 0.2 # closest robot should get to the wall
-        self.target_slow = 0.5 # when robot starts slowing down
+        self.target_slow = 0.4 # when robot starts slowing down
         self.distance_to_obstacle = 0
 
         self.vel = Twist()
@@ -38,18 +38,24 @@ class CollisionAvoidanceNode(Node):
     def process_scan(self, msg):
         if msg.ranges[0] != 0:
             self.distance_to_obstacle = msg.ranges[0]
+        self.bump_state = False
 
     def send_vel(self):
         if self.bump_state == True:
             self.vel.linear.x = 0.0
             self.vel.angular.z = 0.0
             print('stopped bumped')
+
+        # distance collision avoidance
         # elif self.distance_to_obstacle < self.target_stop:
         #     self.vel.linear.x = 0.0
         #     print('stopped close to wall')
         # elif self.distance_to_obstacle < self.target_slow:
         #     self.vel.linear.x = self.vel.linear.x/(self.target_slow - self.distance_to_obstacle)
         #     print('slowing down')
+
+
+
         self.cmd_vel_pub.publish(self.vel)
         print(str(self.vel.linear.x) + 'and' + str(self.vel.angular.z))
 

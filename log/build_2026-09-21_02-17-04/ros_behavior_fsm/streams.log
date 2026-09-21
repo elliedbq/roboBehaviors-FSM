@@ -1,0 +1,21 @@
+[1.655s] Invoking command in '/home/ellie/ros2_ws/src/roboBehaviors-FSM/build/ros_behavior_fsm': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/ellie/ros2_ws/src/roboBehaviors-FSM/build/ros_behavior_fsm/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ellie/ros2_ws/src/roboBehaviors-FSM/install/ros_behavior_fsm/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/ellie/ros2_ws/src/roboBehaviors-FSM/build/ros_behavior_fsm/build --no-deps symlink_data
+[2.153s] running develop
+[2.415s] running egg_info
+[2.438s] writing ros_behavior_fsm.egg-info/PKG-INFO
+[2.438s] writing dependency_links to ros_behavior_fsm.egg-info/dependency_links.txt
+[2.438s] writing entry points to ros_behavior_fsm.egg-info/entry_points.txt
+[2.438s] writing requirements to ros_behavior_fsm.egg-info/requires.txt
+[2.438s] writing top-level names to ros_behavior_fsm.egg-info/top_level.txt
+[2.495s] reading manifest file 'ros_behavior_fsm.egg-info/SOURCES.txt'
+[2.496s] writing manifest file 'ros_behavior_fsm.egg-info/SOURCES.txt'
+[2.526s] running build_ext
+[2.527s] Creating /home/ellie/ros2_ws/src/roboBehaviors-FSM/install/ros_behavior_fsm/lib/python3.12/site-packages/ros-behavior-fsm.egg-link (link to .)
+[2.528s] Installing collision_avoidance script to /home/ellie/ros2_ws/src/roboBehaviors-FSM/install/ros_behavior_fsm/lib/ros_behavior_fsm
+[2.528s] Installing go_straight script to /home/ellie/ros2_ws/src/roboBehaviors-FSM/install/ros_behavior_fsm/lib/ros_behavior_fsm
+[2.528s] Installing wall_follower script to /home/ellie/ros2_ws/src/roboBehaviors-FSM/install/ros_behavior_fsm/lib/ros_behavior_fsm
+[2.528s] 
+[2.528s] Installed /home/ellie/ros2_ws/src/roboBehaviors-FSM/build/ros_behavior_fsm
+[2.529s] running symlink_data
+[2.529s] creating /home/ellie/ros2_ws/src/roboBehaviors-FSM/install/ros_behavior_fsm/share/ros_behavior_fsm/launch
+[2.529s] symbolically linking /home/ellie/ros2_ws/src/roboBehaviors-FSM/build/ros_behavior_fsm/launch/behaviors.launch.py -> /home/ellie/ros2_ws/src/roboBehaviors-FSM/install/ros_behavior_fsm/share/ros_behavior_fsm/launch
+[2.583s] Invoked command in '/home/ellie/ros2_ws/src/roboBehaviors-FSM/build/ros_behavior_fsm' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/ellie/ros2_ws/src/roboBehaviors-FSM/build/ros_behavior_fsm/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ellie/ros2_ws/src/roboBehaviors-FSM/install/ros_behavior_fsm/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/ellie/ros2_ws/src/roboBehaviors-FSM/build/ros_behavior_fsm/build --no-deps symlink_data

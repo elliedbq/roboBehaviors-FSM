@@ -1,4 +1,6 @@
 from setuptools import find_packages, setup
+import os
+from glob import glob
 
 package_name = 'ros_behavior_fsm'
 
@@ -10,6 +12,8 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name, 'launch'),
+        glob('launch/*.launch.py')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -26,7 +30,8 @@ setup(
         'console_scripts': [
             'collision_avoidance = ros_behavior_fsm.collision_avoidance:main',
             'go_straight = ros_behavior_fsm.go_straight:main',
-            'wall_follower = ros_behavior_fsm.wall_follower:main'
+            'wall_follower = ros_behavior_fsm.wall_follower:main',
+            'drive_square1 = ros_behavior_fsm.drive_square1:main'
         ],
     },
 )

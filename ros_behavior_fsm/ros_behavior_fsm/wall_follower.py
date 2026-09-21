@@ -13,7 +13,7 @@ class WallFollowerNode(Node):
         """initialize wall_wollower_node. no inputs"""
         super().__init__('wall_follower_node')
 
-        self.state_active = True
+        self.state_active = False
         self.wall_dist = 0.5
         self.wall_status = 'unknown'
         # options:  'parallel' (parallel to wall) 
@@ -21,7 +21,7 @@ class WallFollowerNode(Node):
         #           'at wall' (at wall, need to align to be straight)
 
         self.des_vel_pub = self.create_publisher(Twist, 'des_vel', 10)
-
+        self.state_pub = self.create_publisher(String, 'state', 10)
         self.state_sub = self.create_subscription(String, 'state', self.process_state, 10)
         self.scan_sub = self.create_subscription(LaserScan, 'scan', self.process_scan, 10)
 
@@ -30,44 +30,26 @@ class WallFollowerNode(Node):
         """takes state msg and determines if wall following state is active"""
         if msg.data == 'wall_following':
             self.state_active = True
+            self.wall_status = 'unknown'
         else:
             self.state_active = False
 
 
     def process_scan(self, msg):
         """takes msg input and sets wall status"""
-        print('scanning')
+        if self.state_active:
+            print('scanning')
 
-        if self.wall_status == 'unknown':
-            print('finding wall')
-            self.find_wall(msg)
-        elif self.wall_status == 'at_wall':
-            print('becoming parallel')
-            self.turn_to_wall(msg)
-        else:
-            print('following wall')
-            self.follow_wall(msg)
+            if self.wall_status == 'unknown':
+                print('finding wall')
+                self.find_wall(msg)
+            elif self.wall_status == 'at_wall':
+                print('becoming parallel')
+                self.turn_to_wall(msg)
+            else:
+                print('following wall')
+                self.follow_wall(msg)
 
-        # # if parallel to wall
-        # if abs(self.find_distance(msg.ranges[80], 80) - self.find_distance(msg.ranges[100],100)) \
-        # < 0.1 \
-        # and self.find_distance(msg.ranges[90],90) < 0.3:
-        #     self.send_velocity(0.1, 0)
-        #     print('parallel to wall')
-        # elif self.find_distance(msg.ranges[90],90) > self.find_distance(msg.ranges[80],80) or \
-        #     self.find_distance(msg.ranges[90],90) < 0.3:
-        #     self.send_velocity(0.1, 10)
-        #     print('turning toward wall')
-
-        # elif self.find_distance(msg.ranges[90], 90) < self.find_distance(msg.ranges[80],80) or \
-        #     self.find_distance(msg.ranges[90],90) > 0.3:
-        #     self.send_velocity(0.1, -10)
-        #     print('turning away from wall')
-        # else: 
-        #     self.send_velocity(0,0)
-        #     print('idk')
-        # print('scan complete')
-        
             
 
     def find_distance(self, length, angle):
@@ -84,8 +66,8 @@ class WallFollowerNode(Node):
                 print('wall found')
                 self.send_velocity(0.0,0.0) # stop once at wall
                 return
-        if abs(msg.ranges[10] - msg.ranges[350]) < 0.1 \
-            and abs(msg.ranges[20] - msg.ranges[340]) < 0.1: 
+        if abs(msg.ranges[10] - msg.ranges[350]) < 0.1 :
+            # and abs(msg.ranges[20] - msg.ranges[340]) < 0.1: 
             # checks for wall in front of robot. (< 0.3 is in case of error in laser scans)
             self.send_velocity(0.1, 0.0) # if wall then go toward wall. if no wall, rotate.
         else:
@@ -112,7 +94,7 @@ class WallFollowerNode(Node):
         if msg.ranges[1] < self.wall_dist*1.2:
             print('turn')
             self.send_velocity(0.0, -10)
-        elif msg.ranges[90] < self.find_distance(msg.ranges[80], 80):
+        elif msg.ranges[90] < self.find_distance(msg.ranges[80], 80) or msg.ranges[90] > self.wall_dist:
             print('up')
             self.send_velocity(0.1, 10)
         elif msg.ranges[90] > self.find_distance(msg.ranges[80], 80):
@@ -129,6 +111,14 @@ class WallFollowerNode(Node):
         vel.angular.z = math.radians(angle)
         self.des_vel_pub.publish(vel)
 
+    def process_bump(self, msg):
+        print('bump recieved')
+        if msg.left_front == 1:
+            self.state_active = False
+            send_msg = String()
+            send_msg.data = 'square'
+            self.state_pub.publish(send_msg)
+            print('switch state to square')
 
 
 

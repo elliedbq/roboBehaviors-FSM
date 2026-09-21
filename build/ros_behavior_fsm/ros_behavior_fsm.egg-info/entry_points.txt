@@ -1,4 +1,5 @@
 [console_scripts]
 collision_avoidance = ros_behavior_fsm.collision_avoidance:main
+drive_square = ros_behavior_fsm.drive_square:main
 go_straight = ros_behavior_fsm.go_straight:main
 wall_follower = ros_behavior_fsm.wall_follower:main

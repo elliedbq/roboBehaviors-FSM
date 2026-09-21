@@ -1,0 +1,17 @@
+running develop
+running egg_info
+writing ros_behavior_fsm.egg-info/PKG-INFO
+writing dependency_links to ros_behavior_fsm.egg-info/dependency_links.txt
+writing entry points to ros_behavior_fsm.egg-info/entry_points.txt
+writing requirements to ros_behavior_fsm.egg-info/requires.txt
+writing top-level names to ros_behavior_fsm.egg-info/top_level.txt
+reading manifest file 'ros_behavior_fsm.egg-info/SOURCES.txt'
+writing manifest file 'ros_behavior_fsm.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/ellie/ros2_ws/src/roboBehaviors-FSM/install/ros_behavior_fsm/lib/python3.12/site-packages/ros-behavior-fsm.egg-link (link to .)
+Installing collision_avoidance script to /home/ellie/ros2_ws/src/roboBehaviors-FSM/install/ros_behavior_fsm/lib/ros_behavior_fsm
+Installing go_straight script to /home/ellie/ros2_ws/src/roboBehaviors-FSM/install/ros_behavior_fsm/lib/ros_behavior_fsm
+Installing wall_follower script to /home/ellie/ros2_ws/src/roboBehaviors-FSM/install/ros_behavior_fsm/lib/ros_behavior_fsm
+
+Installed /home/ellie/ros2_ws/src/roboBehaviors-FSM/build/ros_behavior_fsm
+running symlink_data
