@@ -18,7 +18,7 @@ def generate_launch_description():
         ),
 
         Node(
-            ackage='ros_behavior_fsm',
+            package='ros_behavior_fsm',
             executable='drive_square1',
             output='screen'
         )

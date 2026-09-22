@@ -50,8 +50,6 @@ class WallFollowerNode(Node):
                 print('following wall')
                 self.follow_wall(msg)
 
-            
-
     def find_distance(self, length, angle):
         """find normalized distance"""
         angle = math.radians(angle)
@@ -67,7 +65,6 @@ class WallFollowerNode(Node):
                 self.send_velocity(0.0,0.0) # stop once at wall
                 return
         if abs(msg.ranges[10] - msg.ranges[350]) < 0.1 :
-            # and abs(msg.ranges[20] - msg.ranges[340]) < 0.1: 
             # checks for wall in front of robot. (< 0.3 is in case of error in laser scans)
             self.send_velocity(0.1, 0.0) # if wall then go toward wall. if no wall, rotate.
         else:
@@ -84,9 +81,6 @@ class WallFollowerNode(Node):
             self.wall_status = 'parallel'
         else:
             self.send_velocity(0.0, 10)
-
-
-
 
     def follow_wall(self, msg):
         """tells robot to follows wall"""
