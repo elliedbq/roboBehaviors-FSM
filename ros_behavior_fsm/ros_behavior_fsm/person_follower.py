@@ -13,7 +13,7 @@ class PersonFollowerNode(Node):
         """initialize person_follower_node. no inputs"""
         super().__init__('person_follower_node')
 
-        self.state_active = True
+        self.state_active = False
         self.person_dist = 3
         self.person_dist2 = 0.2
         self.person_status = 'unknown'
@@ -25,6 +25,7 @@ class PersonFollowerNode(Node):
         self.state_pub = self.create_publisher(String, 'state', 10)
         self.state_sub = self.create_subscription(String, 'state', self.process_state, 10)
         self.scan_sub = self.create_subscription(LaserScan, 'scan', self.process_scan, 10)
+        self.bump_sub = self.create_subscription(Bump, 'bump', self.process_bump, 10)
         print("Hey dere")
 
 

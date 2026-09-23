@@ -21,6 +21,12 @@ def generate_launch_description():
             package='ros_behavior_fsm',
             executable='drive_square1',
             output='screen'
+        ),
+
+        Node(
+                    package='ros_behavior_fsm',
+                    executable='person_follower',
+                    output='screen'
         )
 
     ])

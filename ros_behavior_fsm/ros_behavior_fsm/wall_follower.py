@@ -24,6 +24,7 @@ class WallFollowerNode(Node):
         self.state_pub = self.create_publisher(String, 'state', 10)
         self.state_sub = self.create_subscription(String, 'state', self.process_state, 10)
         self.scan_sub = self.create_subscription(LaserScan, 'scan', self.process_scan, 10)
+        self.bump_sub = self.create_subscription(Bump, 'bump', self.process_bump, 10)
 
 
     def process_state(self,msg):
@@ -67,8 +68,10 @@ class WallFollowerNode(Node):
         if abs(msg.ranges[10] - msg.ranges[350]) < 0.1 :
             # checks for wall in front of robot. (< 0.3 is in case of error in laser scans)
             self.send_velocity(0.1, 0.0) # if wall then go toward wall. if no wall, rotate.
+            print('see wall, going straight')
         else:
             self.send_velocity(0.0, -10)
+            print('no wall keep rotating')
 
     def turn_to_wall(self, msg):
         # parallel to wall if side measurements line up
@@ -110,9 +113,9 @@ class WallFollowerNode(Node):
         if msg.left_front == 1:
             self.state_active = False
             send_msg = String()
-            send_msg.data = 'square'
+            send_msg.data = 'person'
             self.state_pub.publish(send_msg)
-            print('switch state to square')
+            print('switch state to person following')
 
 
 
