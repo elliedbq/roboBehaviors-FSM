@@ -36,6 +36,7 @@ class PersonFollowerNode(Node):
             self.state_active = True
             self.person_status = 'unknown'
             print('person following state active')
+            sleep(1)
         else:
             self.state_active = False
 
@@ -97,7 +98,6 @@ class PersonFollowerNode(Node):
             send_msg.data = 'square'
             self.state_pub.publish(send_msg)
             print('switch state to square')
-            sleep(1)
 
 
 

@@ -17,32 +17,25 @@ class DriveSquare1Node(Node):
 
         self.state_active = True
 
-        self.bump_event = Event()
 
         self.publisher = self.create_publisher(Twist, 'des_vel', 10)
         self.state_sub = self.create_subscription(String, 'state', self.process_state, 10)
         self.state_pub = self.create_publisher(String, 'state', 10)
-        self.bump_sub = self.create_subscription(Bump, 'bump', self.process_bump, 10)
 
-        self.square_thread = Thread(target=self.run_loop)
-        self.square_thread.start()
+        if self.state_active:
+            self.create_timer(0.1, self.run_loop)
+
 
     def run_loop(self):
-        while self.state_active:
-            vel = Twist()
-            self.publisher.publish(vel)
-            print(vel)
-            
-            for _ in range(4):
-                if not self.state_active:
-                    break
-                self.drive_forward(0.8)
-                if not self.state_active:
-                    break
-                self.turn_left()
-            print("square route completed")
-        else:
-            print('not here')
+            if self.state_active:
+                for _ in range(4):
+                    print('start edge')
+                    self.drive_forward(0.8)
+                    self.turn_left()
+                print("square route completed")
+                self.switch_state()
+            else:
+                print('inavtive')
         
     def drive(self, linear, angular):
         vel = Twist()
@@ -55,37 +48,30 @@ class DriveSquare1Node(Node):
         self.drive(linear = forward_vel, angular = 0.0)
         
         duration = distance / forward_vel
-        self.bump_event.wait(duration)
+        sleep(duration)
         
         self.drive(linear = 0.0, angular = 0.0)
         
     def turn_left(self):
         angular_vel = 0.3
         self.drive(linear = 0.0, angular = angular_vel)
-        self.bump_event.wait(math.pi/angular_vel/2) # 90 degree turn
+        sleep(math.pi/angular_vel/2) # 90 degree turn
         self.drive(linear= 0.0, angular = 0.0)
-        self.bump_event.wait(0.5)
+        sleep(0.5)
 
     def process_state(self, msg):
         if msg.data == 'square':
             if not self.state_active:
                 self.state_active = True
-                self.bump_event.clear()
-
-                self.square_thread = Thread(target=self.run_loop)
-                self.square_thread.start()
         else:
             self.state_active = False
 
-    def process_bump(self, msg):
-        print('bump recieved')
-        if msg.left_front == 1 and self.state_active:
-            self.state_active = False
-            send_msg = String()
-            send_msg.data = 'wall_following'
-            self.state_pub.publish(send_msg)
-            self.bump_event.set()
-            print('switch state to wall following')
+    def switch_state(self):
+        yum = String()
+        yum.data = 'wall_following'
+        self.state_pub.publish(yum)
+        self.state_active = False
+        print('state switched to wall following')
             
         
         
