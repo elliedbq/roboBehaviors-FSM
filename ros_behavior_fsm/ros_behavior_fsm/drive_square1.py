@@ -34,9 +34,15 @@ class DriveSquare1Node(Node):
             print(vel)
             
             for _ in range(4):
+                if not self.state_active:
+                    break
                 self.drive_forward(0.8)
+                if not self.state_active:
+                    break
                 self.turn_left()
             print("square route completed")
+        else:
+            print('not here')
         
     def drive(self, linear, angular):
         vel = Twist()
@@ -56,29 +62,30 @@ class DriveSquare1Node(Node):
     def turn_left(self):
         angular_vel = 0.3
         self.drive(linear = 0.0, angular = angular_vel)
-        sleep(math.pi/angular_vel/2) # 90 degree turn
+        self.bump_event.wait(math.pi/angular_vel/2) # 90 degree turn
         self.drive(linear= 0.0, angular = 0.0)
         self.bump_event.wait(0.5)
 
     def process_state(self, msg):
         if msg.data == 'square':
-            self.state_active = True
-            self.bump_event.clear()
-            self.square_thread = Thread(target=self.run_loop)
-            self.square_thread.start()
+            if not self.state_active:
+                self.state_active = True
+                self.bump_event.clear()
+
+                self.square_thread = Thread(target=self.run_loop)
+                self.square_thread.start()
         else:
             self.state_active = False
 
     def process_bump(self, msg):
         print('bump recieved')
-        if msg.left_front == 1:
+        if msg.left_front == 1 and self.state_active:
             self.state_active = False
             send_msg = String()
             send_msg.data = 'wall_following'
             self.state_pub.publish(send_msg)
             self.bump_event.set()
             print('switch state to wall following')
-            sleep(1)
             
         
         

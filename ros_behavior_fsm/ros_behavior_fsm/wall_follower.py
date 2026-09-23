@@ -50,6 +50,8 @@ class WallFollowerNode(Node):
             else:
                 print('following wall')
                 self.follow_wall(msg)
+        else:
+            print('inactiv :(')
 
     def find_distance(self, length, angle):
         """find normalized distance"""
@@ -110,7 +112,7 @@ class WallFollowerNode(Node):
 
     def process_bump(self, msg):
         print('bump recieved')
-        if msg.left_front == 1:
+        if msg.left_front == 1 and self.state_active:
             self.state_active = False
             send_msg = String()
             send_msg.data = 'person_following'

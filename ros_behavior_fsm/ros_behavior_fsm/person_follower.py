@@ -91,7 +91,7 @@ class PersonFollowerNode(Node):
 
     def process_bump(self, msg):
         print('bump received')
-        if msg.left_front == 1:
+        if msg.left_front == 1 and self.state_active:
             self.state_active = False
             send_msg = String()
             send_msg.data = 'square'
