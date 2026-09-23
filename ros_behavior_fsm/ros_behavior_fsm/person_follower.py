@@ -6,6 +6,7 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import String
 import math as math
+from time import sleep
 
 class PersonFollowerNode(Node):
     """person follower node, inheriting from the rclpy Node class"""
@@ -96,6 +97,7 @@ class PersonFollowerNode(Node):
             send_msg.data = 'square'
             self.state_pub.publish(send_msg)
             print('switch state to square')
+            sleep(1)
 
 
 

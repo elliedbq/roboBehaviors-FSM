@@ -113,7 +113,7 @@ class WallFollowerNode(Node):
         if msg.left_front == 1:
             self.state_active = False
             send_msg = String()
-            send_msg.data = 'person'
+            send_msg.data = 'person_following'
             self.state_pub.publish(send_msg)
             print('switch state to person following')
 

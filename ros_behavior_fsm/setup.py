@@ -31,7 +31,8 @@ setup(
             'collision_avoidance = ros_behavior_fsm.collision_avoidance:main',
             'go_straight = ros_behavior_fsm.go_straight:main',
             'wall_follower = ros_behavior_fsm.wall_follower:main',
-            'drive_square1 = ros_behavior_fsm.drive_square1:main'
+            'drive_square1 = ros_behavior_fsm.drive_square1:main',
+            'person_follower = ros_behavior_fsm.person_follower:main'
         ],
     },
 )

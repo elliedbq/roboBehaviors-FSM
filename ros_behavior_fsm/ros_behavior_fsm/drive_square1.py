@@ -78,6 +78,7 @@ class DriveSquare1Node(Node):
             self.state_pub.publish(send_msg)
             self.bump_event.set()
             print('switch state to wall following')
+            sleep(1)
             
         
         
