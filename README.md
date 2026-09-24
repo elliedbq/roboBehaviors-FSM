@@ -4,8 +4,9 @@ Computational Robotics Project 1: Getting started with ROS.
 Ellie Kung and Vanessa Aguilar Flores
 
 
-Report:
+Report: https://github.com/elliedbq/roboBehaviors-FSM/blob/main/report.pdf 
 
+Video Demo: https://youtu.be/rBrk-oY5d2U 
 
 
 ## How to run
