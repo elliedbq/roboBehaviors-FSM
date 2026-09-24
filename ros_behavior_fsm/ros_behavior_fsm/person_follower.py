@@ -1,6 +1,6 @@
 """create person following state"""
 import rclpy
-from rclpy.node import Node
+from rclpy.node import Node  
 from neato2_interfaces.msg import Bump
 from geometry_msgs.msg import Twist 
 from sensor_msgs.msg import LaserScan
@@ -22,7 +22,7 @@ class PersonFollowerNode(Node):
         #           'unknown' (need to find a person and go towards it)
         #           'at person' (at person, need to align to be straight)
 
-        self.des_vel_pub = self.create_publisher(Twist, 'cmd_vel', 10)
+        self.des_vel_pub = self.create_publisher(Twist, 'des_vel', 10)
         self.state_pub = self.create_publisher(String, 'state', 10)
         self.state_sub = self.create_subscription(String, 'state', self.process_state, 10)
         self.scan_sub = self.create_subscription(LaserScan, 'scan', self.process_scan, 10)
@@ -36,7 +36,10 @@ class PersonFollowerNode(Node):
             self.state_active = True
             self.person_status = 'unknown'
             print('person following state active')
-            sleep(1)
+            self.destroy_subscription(self.bump_sub)
+            print('destroyed.')
+            sleep(2)
+            self.bump_sub = self.create_subscription(Bump, 'bump', self.process_bump, 10)
         else:
             self.state_active = False
 

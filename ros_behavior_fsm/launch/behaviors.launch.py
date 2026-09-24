@@ -23,10 +23,10 @@ def generate_launch_description():
             output='screen'
         ),
 
-        Node(
-                    package='ros_behavior_fsm',
-                    executable='person_follower',
-                    output='screen'
-        )
+        # Node(
+        #             package='ros_behavior_fsm',
+        #             executable='person_follower',
+        #             output='screen'
+        # )
 
     ])
